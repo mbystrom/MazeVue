@@ -20,7 +20,7 @@ export default {
     }
   },
   methods: {
-    CreateArray(height,width) {
+    CreateArray(height, width) {
       var arr = []
 
       for (var i = 0; i < height; i++) {
@@ -33,17 +33,104 @@ export default {
       this.maze = arr
     },
 
-    GenerateMaze () {
-      var startRow = Math.floor(Math.random() * 32)
-      var startColumn = Math.floor(Math.random() * 32)
-      console.log(startRow + ', ' + startColumn)
-      this.maze[startRow][startColumn] = '_'
+    GenerateMaze (height, width) {
+      var startRow = this.randint(0,width-1)
+      var startColumn = this.randint(0,height-1)
+      var currentTile = {y: startRow, x: startColumn}
+      // console.log(startRow + ', ' + startColumn)
+      var maze = this.maze
+      var windingPercent = 30
+
+      // 1 = left, 2 = up, 3 = right, 4 = down
+      var dirToCarve = this.randint(1,4)
+      while (isDrawable(currentTile, dirToCarve)) {
+        if (check2Ahead(currentTile, dirToCarve)) {
+
+        }
+      }
+    },
+
+    check2Ahead(tile,dir) {
+      // if (dir === 1) {
+      //   if ()
+      // }
+    },
+
+    isDrawable (tile, dir) {
+      var drawable = true
+      for (var y = tile.y - 1; y < tile.y + 1; y++) {
+        for (var x = tile.x - 1; x < tile.x + 1; x++) {
+          if (dir === 1) {
+            if (x <= tile.x && y === tile.y) {
+              continue
+            }
+            else {
+              if (x === tile.x && y === tile.y) {
+                continue
+              }
+              else if (maze[y][x] === '#') {
+                drawable = false
+                return drawable
+              }
+            }
+          }
+          else if (dir === 2) {
+            if (y <= tile.y && x === tile.x) {
+              continue
+            }
+            else {
+              if (x === tile.x && y === tile.y) {
+                continue
+              }
+              else if (maze[y][x] === '#') {
+                drawable = false
+                return drawable
+              }
+            }
+          }
+          else if (dir === 3) {
+            if (x >= tile.x && y === tile.y) {
+              continue
+            }
+            else {
+              if (x === tile.x && y === tile.y) {
+                continue
+              }
+              else if (maze[y][x] === '#') {
+                drawable = false
+                return drawable
+              }
+            }
+          }
+          else {
+            if (y >= tile.y && x === tile.x) {
+              continue
+            }
+            else {
+              if (x === tile.x && y === tile.y) {
+                continue
+              }
+              else if (maze[y][x] === '#') {
+                drawable = false
+                return drawable
+              }
+            }
+          }
+        }
+      }
+      return drawable
+    },
+
+    randint(start, end) {
+      var range = (end - start) + 1
+      var num = Math.floor(Math.random() * range) + start
+      return num
     }
   },
 
   created: function () {
     this.CreateArray(this.height, this.width)
-    this.GenerateMaze()
+    this.GenerateMaze(this.height, this.width)
   }
 }
 </script>
