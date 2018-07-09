@@ -3,8 +3,8 @@
     <h1>A Simple Maze</h1>
     <span v-for="(row, index) in maze" :key="index">
       <span v-for="(col, index) in row" :key="index">
-        <span v-if="col === '#'">&nbsp;#&nbsp;</span>
-        <span v-else>&nbsp;=&nbsp;</span>
+        <span v-if="col === '#'">#&nbsp;</span>
+        <span v-else>.&nbsp;</span>
       </span><br/>
     </span>
   </div>
