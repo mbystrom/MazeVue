@@ -35,17 +35,19 @@ export default {
 
     GenerateMaze (height, width) {
       console.log("starting maze generation...")
-      var startRow = this.randint(0,width-1)
-      var startColumn = this.randint(0,height-1)
+      var startRow = this.randint(1,width-2)
+      var startColumn = this.randint(1,height-2)
       var currentTile = { y: startRow, x: startColumn }
       console.log("starting tile is: (" + currentTile.x + ", " + currentTile.y + ")")
       // console.log(startRow + ', ' + startColumn)
       var windingPercent = 30
       var visitedTiles = []
+      var loopsSinceLastWind = 0
 
       // 1 = left, 2 = up, 3 = right, 4 = down
       var dirToCarve = this.randint(1,4)
-      while (this.isDrawable(currentTile, dirToCarve)) {
+      while (this.isDrawable(currentTile, visitedTiles)) {
+        loopsSinceLastWind++
         console.log("current tile is: (" + currentTile.x + ", " + currentTile.y + ")")
         console.log("direction is: " + dirToCarve)
         if (this.check2Ahead(currentTile, dirToCarve)) {
@@ -54,13 +56,27 @@ export default {
           else if (dirToCarve === 2) { nextTile.y -= 1 }
           else if (dirToCarve === 3) { nextTile.x += 1 }
           else { nextTile.y += 1 }
-          this.maze[currentTile.y][currentTile.x] = "="
-          visitedTiles.push(currentTile)
+          this.maze[currentTile.y][currentTile.x] = "."
+
+          // submethod for pushing tiles
+          var x_t = currentTile.x
+          var y_t = currentTile.y
+          visitedTiles.push({ y: y_t, x: x_t }); console.log("pushing tile!")
+          if (visitedTiles.length > 3) { visitedTiles.shift(); console.log("shifting tile!") }
+          console.log(visitedTiles)
+          // end submethod
+
           currentTile = nextTile
-          if (visitedTiles.length > 3) { visitedTiles.shift() }
-          if (this.randint(0,100) <= windingPercent) { this.Wynd(dirToCarve) }
+          if (loopsSinceLastWind > 3) {
+            if (this.randint(0,100) <= windingPercent) { 
+              loopsSinceLastWind = 0
+              this.Wynd(dirToCarve)
+            }
+          }
+          console.log("loops since winding: " + loopsSinceLastWind)
         }
         else {
+          loopsSinceLastWind = 0
           dirToCarve = this.Wynd(dirToCarve)
         }
       }
@@ -103,38 +119,50 @@ export default {
       }
     },
 
-    isDrawable (tile, dir) {
+    isDrawable (tile, visited) {
       console.log("checking if current tile is drawable...")
+      // var drawable = true
+      // for (var y = tile.y - 1; y < tile.y + 1; y++) {
+      //   for (var x = tile.x - 1; x < tile.x + 1; x++) {
+      //     if (dir === 1) {
+      //       if (x <= tile.x && y === tile.y) { continue }
+      //       else {
+      //         if (x === tile.x && y === tile.y) { continue }
+      //         else if (this.maze[y][x] !== '#') { drawable = false }
+      //       }
+      //     }
+      //     else if (dir === 2) {
+      //       if (y <= tile.y && x === tile.x) { continue }
+      //       else {
+      //         if (x === tile.x && y === tile.y) { continue }
+      //         else if (this.maze[y][x] !== '#') { drawable = false }
+      //       }
+      //     }
+      //     else if (dir === 3) {
+      //       if (x >= tile.x && y === tile.y) { continue }
+      //       else {
+      //         if (x === tile.x && y === tile.y) { continue }
+      //         else if (this.maze[y][x] !== '#') { drawable = false }
+      //       }
+      //     }
+      //     else {
+      //       if (y >= tile.y && x === tile.x) { continue }
+      //       else {
+      //         if (x === tile.x && y === tile.y) { continue }
+      //         else if (this.maze[y][x] !== '#') { drawable = false }
+      //       }
+      //     }
+      //   }
+      // }
       var drawable = true
       for (var y = tile.y - 1; y < tile.y + 1; y++) {
         for (var x = tile.x - 1; x < tile.x + 1; x++) {
-          if (dir === 1) {
-            if (x <= tile.x && y === tile.y) { continue }
-            else {
-              if (x === tile.x && y === tile.y) { continue }
-              else if (this.maze[y][x] !== '#') { drawable = false }
-            }
+          for (var coord in visited) {
+            if (coord.y === y && coord.x === x) { continue }
           }
-          else if (dir === 2) {
-            if (y <= tile.y && x === tile.x) { continue }
-            else {
-              if (x === tile.x && y === tile.y) { continue }
-              else if (this.maze[y][x] !== '#') { drawable = false }
-            }
-          }
-          else if (dir === 3) {
-            if (x >= tile.x && y === tile.y) { continue }
-            else {
-              if (x === tile.x && y === tile.y) { continue }
-              else if (this.maze[y][x] !== '#') { drawable = false }
-            }
-          }
+          if (tile.x === x && tile.y === y) { continue }
           else {
-            if (y >= tile.y && x === tile.x) { continue }
-            else {
-              if (x === tile.x && y === tile.y) { continue }
-              else if (this.maze[y][x] !== '#') { drawable = false }
-            }
+            if (this.maze[y][x] !== '#') { drawable = false }
           }
         }
       }
