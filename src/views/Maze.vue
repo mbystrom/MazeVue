@@ -41,14 +41,39 @@ export default {
       console.log("starting tile is: (" + currentTile.x + ", " + currentTile.y + ")")
       // console.log(startRow + ', ' + startColumn)
       var windingPercent = 30
+      var visitedTiles = []
 
       // 1 = left, 2 = up, 3 = right, 4 = down
       var dirToCarve = this.randint(1,4)
-      while (isDrawable(currentTile, dirToCarve)) {
-        if (check2Ahead(currentTile, dirToCarve)) {
-
+      while (this.isDrawable(currentTile, dirToCarve)) {
+        console.log("current tile is: (" + currentTile.x + ", " + currentTile.y + ")")
+        console.log("direction is: " + dirToCarve)
+        if (this.check2Ahead(currentTile, dirToCarve)) {
+          var nextTile = currentTile
+          if (dirToCarve === 1) { nextTile.x -= 1 }
+          else if (dirToCarve === 2) { nextTile.y -= 1 }
+          else if (dirToCarve === 3) { nextTile.x += 1 }
+          else { nextTile.y += 1 }
+          this.maze[currentTile.y][currentTile.x] = "="
+          visitedTiles.push(currentTile)
+          currentTile = nextTile
+          if (visitedTiles.length > 3) { visitedTiles.shift() }
+          if (this.randint(0,100) <= windingPercent) { this.Wynd(dirToCarve) }
+        }
+        else {
+          dirToCarve = this.Wynd(dirToCarve)
         }
       }
+    },
+
+    // named wynd instead of wind to make it seem less like the air current
+    Wynd (dir) {
+      console.log("changing direction!")
+      var addToDir = this.randint(1,3)
+      dir += addToDir
+      if (dir > 4) { dir -= 4 }
+      console.log("direction is now: " + dir)
+      return dir
     },
 
     check2Ahead(tile,dir) {
