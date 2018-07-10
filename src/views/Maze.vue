@@ -56,6 +56,10 @@ export default {
           else if (dirToCarve === 2) { nextTile.y -= 1 }
           else if (dirToCarve === 3) { nextTile.x += 1 }
           else { nextTile.y += 1 }
+          if (!this.isDrawable(nextTile,visitedTiles)) {
+            dirToCarve = this.Wynd(dirToCarve)
+            continue
+          }
           this.maze[currentTile.y][currentTile.x] = "."
 
           // submethod for pushing tiles
@@ -67,10 +71,10 @@ export default {
           // end submethod
 
           currentTile = nextTile
-          if (loopsSinceLastWind > 3) {
+          if (loopsSinceLastWind > 2) {
             if (this.randint(0,100) <= windingPercent) { 
               loopsSinceLastWind = 0
-              this.Wynd(dirToCarve)
+              dirToCarve = this.Wynd(dirToCarve)
             }
           }
           console.log("loops since winding: " + loopsSinceLastWind)
@@ -79,13 +83,13 @@ export default {
           loopsSinceLastWind = 0
           dirToCarve = this.Wynd(dirToCarve)
         }
-      }
+      }; console.log(dirToCarve)
     },
 
     // named wynd instead of wind to make it seem less like the air current
     Wynd (dir) {
       console.log("changing direction!")
-      dirChosen = false
+      var dirChosen = false
       while (!dirChosen) {
         var addToDir = this.randint(1,3)
         var newDir = dir + addToDir
@@ -129,7 +133,9 @@ export default {
     },
 
     isDrawable (tile, visited) {
-      console.log("checking if current tile is drawable...")
+      console.log("checking if tile (" + tile.x + ", " + tile.y + ") is drawable...")
+
+      // this version takes the current direction
       // var drawable = true
       // for (var y = tile.y - 1; y < tile.y + 1; y++) {
       //   for (var x = tile.x - 1; x < tile.x + 1; x++) {
@@ -163,11 +169,13 @@ export default {
       //     }
       //   }
       // }
+
+      // this version takes a list of visited tiles
       var drawable = true
       for (var y = tile.y - 1; y < tile.y + 1; y++) {
         for (var x = tile.x - 1; x < tile.x + 1; x++) {
-          for (var coord in visited) {
-            if (coord.y === y && coord.x === x) { continue }
+          for (var i = 0; i < visited.length; i++) {
+            if (visited[i].y === y && visited[i].x === x) { continue }
           }
           if (tile.x === x && tile.y === y) { continue }
           else {
