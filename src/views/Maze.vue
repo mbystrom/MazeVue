@@ -89,18 +89,24 @@ export default {
     // named wynd instead of wind to make it seem less like the air current
     Wynd (dir) {
       console.log("changing direction!")
-      var dirChosen = false
-      while (!dirChosen) {
-        var addToDir = this.randint(1,3)
-        var newDir = dir + addToDir
-        if (newDir > 4) { newDir -= 4 }
-        if (newDir === 1 || newDir === 3) {
-          if (dir === 2 || dir === 4) { dirChosen = true }
-        }
-        else {
-          if (dir === 1 || dir === 3) { dirChosen = true }
-        }
-      }
+      // var dirChosen = false
+      // while (!dirChosen) {
+      //   var addToDir = this.randint(1,3)
+      //   var newDir = dir + addToDir
+      //   if (newDir > 4) { newDir -= 4 }
+      //   if (newDir === 1 || newDir === 3) {
+      //     if (dir === 2 || dir === 4) { dirChosen = true }
+      //   }
+      //   else {
+      //     if (dir === 1 || dir === 3) { dirChosen = true }
+      //   }
+      // }
+
+      var turn = this.randint(1,2)
+      var newDir = dir
+      turn === 1 ? newDir -= 1 : newDir += 1
+      if (newDir > 4) { newDir -= 4 }
+      else if (newDir < 1) { newDir += 4 }
       console.log("direction is now: " + newDir)
       return newDir
     },
