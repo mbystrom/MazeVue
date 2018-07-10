@@ -41,7 +41,7 @@ export default {
       console.log("starting tile is: (" + currentTile.x + ", " + currentTile.y + ")")
       // console.log(startRow + ', ' + startColumn)
       var windingPercent = 30
-      var visitedTiles = []
+      var visitedTiles = [currentTile,]
       var loopsSinceLastWind = 0
 
       // 1 = left, 2 = up, 3 = right, 4 = down
@@ -66,7 +66,6 @@ export default {
           var x_t = currentTile.x
           var y_t = currentTile.y
           visitedTiles.push({ y: y_t, x: x_t }); console.log("pushing tile!")
-          if (visitedTiles.length > 3) { visitedTiles.shift(); console.log("shifting tile!") }
           console.log(visitedTiles)
           // end submethod
 
@@ -177,11 +176,14 @@ export default {
       // }
 
       // this version takes a list of visited tiles
+      var recent3 = []
+      recent3 = visited.slice(-3)
+
       var drawable = true
       for (var y = tile.y - 1; y < tile.y + 1; y++) {
         for (var x = tile.x - 1; x < tile.x + 1; x++) {
-          for (var i = 0; i < visited.length; i++) {
-            if (visited[i].y === y && visited[i].x === x) { continue }
+          for (var i = 0; i < recent3.length; i++) {
+            if (recent3[i].y === y && recent3[i].x === x) { continue }
           }
           if (tile.x === x && tile.y === y) { continue }
           else {
