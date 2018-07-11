@@ -88,18 +88,6 @@ export default {
     // named wynd instead of wind to make it seem less like the air current
     Wynd (dir) {
       console.log("changing direction!")
-      // var dirChosen = false
-      // while (!dirChosen) {
-      //   var addToDir = this.randint(1,3)
-      //   var newDir = dir + addToDir
-      //   if (newDir > 4) { newDir -= 4 }
-      //   if (newDir === 1 || newDir === 3) {
-      //     if (dir === 2 || dir === 4) { dirChosen = true }
-      //   }
-      //   else {
-      //     if (dir === 1 || dir === 3) { dirChosen = true }
-      //   }
-      // }
 
       var turn = this.randint(1,2)
       var newDir = dir
@@ -140,41 +128,6 @@ export default {
     isDrawable (tile, visited) {
       console.log("checking if tile (" + tile.x + ", " + tile.y + ") is drawable...")
 
-      // this version takes the current direction
-      // var drawable = true
-      // for (var y = tile.y - 1; y < tile.y + 1; y++) {
-      //   for (var x = tile.x - 1; x < tile.x + 1; x++) {
-      //     if (dir === 1) {
-      //       if (x <= tile.x && y === tile.y) { continue }
-      //       else {
-      //         if (x === tile.x && y === tile.y) { continue }
-      //         else if (this.maze[y][x] !== '#') { drawable = false }
-      //       }
-      //     }
-      //     else if (dir === 2) {
-      //       if (y <= tile.y && x === tile.x) { continue }
-      //       else {
-      //         if (x === tile.x && y === tile.y) { continue }
-      //         else if (this.maze[y][x] !== '#') { drawable = false }
-      //       }
-      //     }
-      //     else if (dir === 3) {
-      //       if (x >= tile.x && y === tile.y) { continue }
-      //       else {
-      //         if (x === tile.x && y === tile.y) { continue }
-      //         else if (this.maze[y][x] !== '#') { drawable = false }
-      //       }
-      //     }
-      //     else {
-      //       if (y >= tile.y && x === tile.x) { continue }
-      //       else {
-      //         if (x === tile.x && y === tile.y) { continue }
-      //         else if (this.maze[y][x] !== '#') { drawable = false }
-      //       }
-      //     }
-      //   }
-      // }
-
       // this version takes a list of visited tiles
       var recent3 = []
       recent3 = visited.slice(-3)
@@ -182,12 +135,14 @@ export default {
       var drawable = true
       for (var y = tile.y - 1; y < tile.y + 1; y++) {
         for (var x = tile.x - 1; x < tile.x + 1; x++) {
-          for (var i = 0; i < recent3.length; i++) {
-            if (recent3[i].y === y && recent3[i].x === x) { continue }
-          }
-          if (tile.x === x && tile.y === y) { continue }
-          else {
-            if (this.maze[y][x] !== '#') { drawable = false }
+          if (this.maze[y][x] !== '#') {
+            if (tile.x !== x && tile.y !== y) {
+              for (var i in recent3) {
+                if (i.x !== x && i.y !== y) {
+                  drawable = false
+                }
+              }
+            }
           }
         }
       }
